@@ -18,6 +18,9 @@
   },
   "homepage": "https://github.com/kghildial/datepick-js#readme",
   "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "babel-loader": "^8.0.6",
     "css-loader": "^3.4.0",
     "node-sass": "^4.13.0",
     "sass-loader": "^8.0.0",
