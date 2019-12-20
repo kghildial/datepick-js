@@ -4,7 +4,8 @@
   "description": "A Vanilla JS DatePicker with a Clean UI",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,13 @@
   "bugs": {
     "url": "https://github.com/kghildial/datepick-js/issues"
   },
-  "homepage": "https://github.com/kghildial/datepick-js#readme"
+  "homepage": "https://github.com/kghildial/datepick-js#readme",
+  "devDependencies": {
+    "css-loader": "^3.4.0",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.2",
+    "webpack": "^4.41.4",
+    "webpack-cli": "^3.3.10"
+  }
 }
