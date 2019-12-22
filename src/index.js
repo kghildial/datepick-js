@@ -29,15 +29,86 @@ const monthsList = Object.keys(monthsMap);
 function initDatepicker(elememtID, dpjsConfig) {
   // Attach the initial datepicker scaffold
   document.querySelector('body').innerHTML +=
-    '<div id="dpjs_datepicker"><div class="dpjs_selectors"><select name="dpjs_month" id="dpjs_monthSelector"></select><select name="dpjs_year"></select></div><div id="dpjs_calender"><div id="dpjs_days"></div><div id="dpjs_dates"></div></div></div>';
+    '<div id="dpjs_datepicker"><div class="dpjs_selectors"><div id="dpjs_pseudoMonthSelector" class="dpjs_selectWrapper"><select name="dpjs_month" id="dpjs_monthSelector"></select></div><div id="dpjs_pseudoYearSelector" class="dpjs_selectWrapper"><select name="dpjs_year" id="dpjs_yearSelector"></select></div></div><div id="dpjs_calender"><div id="dpjs_days"></div><div id="dpjs_dates"></div></div></div>';
 
   // Populate days in the calender section
   populateCalenderDays();
   populateMonthDates('Dec', 2019);
+  addSelectors();
+}
+
+function addSelectors() {
+  const selectorClauses = ['Month', 'Year'];
+
+  const populateRealSelectors = (selectorClauses, startYear, endYear) => {
+    selectorClauses.forEach(selectorClause => {
+      if (selectorClause === 'Month') {
+        monthsList.forEach(month => {
+          document.querySelector(
+            '#dpjs_monthSelector',
+          ).innerHTML += `<option value="${month}">${month}</option>`;
+        });
+      }
+
+      if (selectorClause === 'Year') {
+        const initialYear = startYear || new Date().getFullYear() - 10;
+        const finalYear = endYear || new Date().getFullYear();
+        for (let year = initialYear; year <= finalYear; year += 1) {
+          document.querySelector(
+            '#dpjs_yearSelector',
+          ).innerHTML += `<option value="${year}">${year}</option>`;
+        }
+      }
+    });
+  };
+
+  const populatePseudoSelectors = (selectorClauses, startYear, endYear) => {
+    selectorClauses.forEach(selectorClause => {
+      if (selectorClause === 'Month') {
+        document.querySelector(
+          '#dpjs_pseudoMonthSelector .dpjs_pseudoSelect',
+        ).innerHTML +=
+          '<ul id="dpjs_monthSelectList" class="dpjs_pseudoSelectList"></ul>';
+
+        monthsList.forEach(month => {
+          document.querySelector(
+            '#dpjs_monthSelectList',
+          ).innerHTML += `<li value="${month}">${month}</li>`;
+        });
+      }
+
+      if (selectorClause === 'Year') {
+        document.querySelector(
+          '#dpjs_pseudoYearSelector .dpjs_pseudoSelect',
+        ).innerHTML +=
+          '<ul id="dpjs_yearSelectList" class="dpjs_pseudoSelectList"></ul>';
+
+        const initialYear = startYear || new Date().getFullYear() - 10;
+        const finalYear = endYear || new Date().getFullYear();
+        for (let year = initialYear; year <= finalYear; year += 1) {
+          document.querySelector(
+            '#dpjs_yearSelectList',
+          ).innerHTML += `<li value="${year}">${year}</li>`;
+        }
+      }
+    });
+  };
+
+  // Add pseudoSelectors
+  selectorClauses.forEach(selectorClause => {
+    document.querySelector(
+      `#dpjs_pseudo${selectorClause}Selector`,
+    ).innerHTML += `<span id="dpjs_pseudo${selectorClause}Selector" class="dpjs_pseudoSelect"></span>`;
+  });
+
+  // TODO: Add params dependency line from init function
+  populateRealSelectors(selectorClauses, 1980, 2019);
+  populatePseudoSelectors(selectorClauses, 1980, 2019);
+  registerSelectorEvents();
 }
 
 // Zeller Magic :P
-const getMonthStartingDayIndex = (month, year) => {
+function getMonthStartingDayIndex(month, year) {
   const K = 1;
   const M = monthsMap[month];
   const D =
@@ -57,7 +128,7 @@ const getMonthStartingDayIndex = (month, year) => {
   const remainder = F < 0 ? 7 + (F % 7) : F % 7;
 
   return remainder;
-};
+}
 
 function isLeapYear(year) {
   if (year % 4 === 0) {
