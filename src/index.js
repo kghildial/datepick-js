@@ -28,31 +28,33 @@ const monthsList = Object.keys(monthsMap);
 
 const datepickerStates = {};
 
-function initDatepicker(elememtID, dpjsConfig) {
-  createDatePickerState(elememtID, dpjsConfig);
+function initDatepicker(elementID, dpjsConfig) {
+  createDatePickerState(elementID, dpjsConfig);
 
   const today = new Date();
   const initMonth = dpjsConfig.initMonth || monthsList[today.getMonth()];
   const initYear = dpjsConfig.initYear || today.getFullYear();
 
   // Attach the initial datepicker scaffold
-  document.querySelector('body').innerHTML +=
-    '<div id="dpjs_datepicker"><div class="dpjs_selectors"><div id="dpjs_pseudoMonthSelector" class="dpjs_selectWrapper"><select name="dpjs_month" id="dpjs_monthSelector"></select></div><div id="dpjs_pseudoYearSelector" class="dpjs_selectWrapper"><select name="dpjs_year" id="dpjs_yearSelector"></select></div></div><div id="dpjs_calender"><div id="dpjs_days"></div><div id="dpjs_dates"></div></div></div>';
+  document.querySelector(
+    'body',
+  ).innerHTML += `<div id="dpjs_datepicker_${elementID}" class="dpjs_datepicker"><div class="dpjs_selectors"><div id="dpjs_pseudoMonthSelector_${elementID}" class="dpjs_selectWrapper"><select name="dpjs_month" id="dpjs_monthSelector_${elementID}"></select></div><div id="dpjs_pseudoYearSelector_${elementID}" class="dpjs_selectWrapper"><select name="dpjs_year" id="dpjs_yearSelector_${elementID}"></select></div></div><div id="dpjs_calender_${elementID}"><div id="dpjs_days_${elementID}" class="dpjs_days"></div><div id="dpjs_dates_${elementID}" class="dpjs_dates"></div></div></div>`;
 
-  populateCalenderDays();
-  populateCalenderDates(initMonth, initYear);
-  addSelectors({
+  populateCalenderDays(elementID);
+  populateCalenderDates(elementID, initMonth, initYear);
+  addSelectors(elementID, {
     initMonth,
     initYear,
     minYear: dpjsConfig.minYear,
     maxYear: dpjsConfig.maxYear,
   });
-  setDatepickerPos(elememtID);
-  registerDatepickerEvents(elememtID);
+  setDatepickerPos(elementID);
+  registerDatepickerEvents(elementID);
 }
 
 function createDatePickerState(elementID, dpjsConfig) {
   datepickerStates[elementID] = {
+    elementID,
     datepickerID: `dpjs_datepicker_${elementID}`,
     isDatepickerOpen: false,
     dpjsConfig,
@@ -62,7 +64,9 @@ function createDatePickerState(elementID, dpjsConfig) {
 
 function registerDatepickerEvents(elementID) {
   const datepickerInput = document.querySelector(`#${elementID}`);
-  const datepickerWidget = document.querySelector('#dpjs_datepicker');
+  const datepickerWidget = document.querySelector(
+    `#dpjs_datepicker_${elementID}`,
+  );
 
   const preventEdits = () => {
     datepickerInput.addEventListener('keydown', event => {
@@ -73,6 +77,7 @@ function registerDatepickerEvents(elementID) {
 
   const toggleDatepickerOnCLick = () => {
     datepickerStates[elementID] = false;
+
     document.addEventListener('click', event => {
       if (event.target.getAttribute('id') === elementID) {
         datepickerWidget.style.display = 'block';
@@ -80,7 +85,9 @@ function registerDatepickerEvents(elementID) {
           datepickerWidget.style.opacity = '1';
         }, 200);
       } else if (
-        !document.querySelector('#dpjs_datepicker').contains(event.target)
+        !document
+          .querySelector(`#dpjs_datepicker_${elementID}`)
+          .contains(event.target)
       ) {
         datepickerWidget.style.opacity = '0';
         setTimeout(() => {
@@ -94,10 +101,10 @@ function registerDatepickerEvents(elementID) {
   toggleDatepickerOnCLick();
 }
 
-function setDatepickerPos(elememtID) {
-  if (document.querySelectorAll(`#${elememtID}`).length > 1)
+function setDatepickerPos(elementID) {
+  if (document.querySelectorAll(`#${elementID}`).length > 1)
     throw new Error(
-      `DatepickJS:: You have more than one instace of the ID => "${elememtID}" in the DOM. Please ensure the datepicker input to have a unique ID`,
+      `DatepickJS:: You have more than one instace of the ID => "${elementID}" in the DOM. Please ensure the datepicker input to have a unique ID`,
     );
 
   const getOffset = el => {
@@ -111,16 +118,19 @@ function setDatepickerPos(elememtID) {
     return { top: _y, left: _x };
   };
 
-  const inputEl = document.querySelector(`#${elememtID}`);
+  const inputEl = document.querySelector(`#${elementID}`);
 
   const inputPos = getOffset(inputEl);
-  document.querySelector('#dpjs_datepicker').style.top = `${inputPos.top +
-    inputEl.offsetHeight}px`;
-  document.querySelector('#dpjs_datepicker').style.left = `${inputPos.left}px`;
+  const datepickerWidget = document.querySelector(
+    `#dpjs_datepicker_${elementID}`,
+  );
+
+  datepickerWidget.style.top = `${inputPos.top + inputEl.offsetHeight}px`;
+  datepickerWidget.style.left = `${inputPos.left}px`;
 }
 
 // This fuction populates the selector contents
-function addSelectors({ initMonth, initYear, minYear, maxYear }) {
+function addSelectors(elementID, { initMonth, initYear, minYear, maxYear }) {
   const selectorClauses = ['Month', 'Year'];
 
   const populateRealSelectors = (selectorClauses, startYear, endYear) => {
@@ -128,7 +138,7 @@ function addSelectors({ initMonth, initYear, minYear, maxYear }) {
       if (selectorClause === 'Month') {
         monthsList.forEach(month => {
           document.querySelector(
-            '#dpjs_monthSelector',
+            `#dpjs_monthSelector_${elementID}`,
           ).innerHTML += `<option value="${month}">${month}</option>`;
         });
       }
@@ -138,7 +148,7 @@ function addSelectors({ initMonth, initYear, minYear, maxYear }) {
         const finalYear = endYear || new Date().getFullYear();
         for (let year = initialYear; year <= finalYear; year += 1) {
           document.querySelector(
-            '#dpjs_yearSelector',
+            `#dpjs_yearSelector_${elementID}`,
           ).innerHTML += `<option value="${year}">${year}</option>`;
         }
       }
@@ -149,28 +159,26 @@ function addSelectors({ initMonth, initYear, minYear, maxYear }) {
     selectorClauses.forEach(selectorClause => {
       if (selectorClause === 'Month') {
         document.querySelector(
-          '#dpjs_pseudoMonthSelector .dpjs_pseudoSelect',
-        ).innerHTML +=
-          '<ul id="dpjs_monthSelectList" class="dpjs_pseudoSelectList"></ul>';
+          `#dpjs_pseudoMonthSelector_${elementID} .dpjs_pseudoSelect`,
+        ).innerHTML += `<ul id="dpjs_monthSelectList_${elementID}" class="dpjs_pseudoSelectList"></ul>`;
 
         monthsList.forEach(month => {
           document.querySelector(
-            '#dpjs_monthSelectList',
+            `#dpjs_monthSelectList_${elementID}`,
           ).innerHTML += `<li value="${month}">${month}</li>`;
         });
       }
 
       if (selectorClause === 'Year') {
         document.querySelector(
-          '#dpjs_pseudoYearSelector .dpjs_pseudoSelect',
-        ).innerHTML +=
-          '<ul id="dpjs_yearSelectList" class="dpjs_pseudoSelectList"></ul>';
+          `#dpjs_pseudoYearSelector_${elementID} .dpjs_pseudoSelect`,
+        ).innerHTML += `<ul id="dpjs_yearSelectList_${elementID}" class="dpjs_pseudoSelectList"></ul>`;
 
         const initialYear = startYear || new Date().getFullYear() - 10;
         const finalYear = endYear || new Date().getFullYear();
         for (let year = initialYear; year <= finalYear; year += 1) {
           document.querySelector(
-            '#dpjs_yearSelectList',
+            `#dpjs_yearSelectList_${elementID}`,
           ).innerHTML += `<li value="${year}">${year}</li>`;
         }
       }
@@ -201,7 +209,7 @@ function addSelectors({ initMonth, initYear, minYear, maxYear }) {
     selectorClauses.forEach(selectorClause => {
       // Open select-list input
       document
-        .querySelector(`#dpjs_selected${selectorClause}Value`)
+        .querySelector(`#dpjs_selected${selectorClause}Value_${elementID}`)
         .addEventListener('click', event => {
           if (event.target.className === 'dpjs_pseudoSelectValue')
             event.target.nextElementSibling.style.height = '300px';
@@ -209,34 +217,34 @@ function addSelectors({ initMonth, initYear, minYear, maxYear }) {
 
       // Select an option event
       document
-        .querySelector(`#dpjs_${selectorClause.toLowerCase()}SelectList`)
+        .querySelector(
+          `#dpjs_${selectorClause.toLowerCase()}SelectList_${elementID}`,
+        )
         .addEventListener('click', event => {
           document.querySelector(
-            `#dpjs_selected${selectorClause}Value`,
+            `#dpjs_selected${selectorClause}Value_${elementID}`,
           ).textContent = event.target.getAttribute('value');
 
           // Set the value in the original select input
           document.querySelector(
-            `#dpjs_${selectorClause.toLowerCase()}Selector`,
+            `#dpjs_${selectorClause.toLowerCase()}Selector_${elementID}`,
           ).value = event.target.getAttribute('value');
 
           event.target.parentElement.style.height = '0';
 
           populateCalenderDates(
-            document.querySelector('#dpjs_monthSelector').value,
-            document.querySelector('#dpjs_yearSelector').value,
+            document.querySelector(`#dpjs_monthSelector-${elementID}`).value,
+            document.querySelector(`#dpjs_yearSelector_${elementID}`).value,
           );
         });
     });
-
-    document.querySelectorAll;
   };
 
   // Add pseudoSelectors
   selectorClauses.forEach(selectorClause => {
     document.querySelector(
-      `#dpjs_pseudo${selectorClause}Selector`,
-    ).innerHTML += `<div id="dpjs_pseudo${selectorClause}Selector" class="dpjs_pseudoSelect"><span id="dpjs_selected${selectorClause}Value" class="dpjs_pseudoSelectValue">${eval(
+      `#dpjs_pseudo${selectorClause}Selector_${elementID}`,
+    ).innerHTML += `<div id="dpjs_pseudo${selectorClause}Selector_${elementID}" class="dpjs_pseudoSelect"><span id="dpjs_selected${selectorClause}Value_${elementID}" class="dpjs_pseudoSelectValue">${eval(
       `init${selectorClause}`,
     )}</span></div>`;
   });
@@ -297,20 +305,20 @@ function getTotalDaysInMonth(month, year) {
   return monthIndex % 2 !== 0 ? 31 : 30;
 }
 
-function populateCalenderDays() {
+function populateCalenderDays(elementID) {
   daysList.forEach(day => {
     document.querySelector(
-      '#dpjs_days',
-    ).innerHTML += `<p id="${day}">${day}</p>`;
+      `#dpjs_days_${elementID}`,
+    ).innerHTML += `<p id="dpjs_${elementID}_day-${day}">${day}</p>`;
   });
 }
 
-function populateCalenderDates(month, year) {
+function populateCalenderDates(elementID, month, year) {
   // Clear any existing dates in the calender
-  document.querySelector('#dpjs_dates').style.opacity = '0';
+  document.querySelector(`#dpjs_dates_${elementID}`).style.opacity = '0';
 
   setTimeout(() => {
-    document.querySelector('#dpjs_dates').innerHTML = '';
+    document.querySelector(`#dpjs_dates_${elementID}`).innerHTML = '';
 
     const startingDayIndex = getMonthStartingDayIndex(month, year);
     const totalDaysInMonth = getTotalDaysInMonth(month, year);
@@ -321,8 +329,8 @@ function populateCalenderDates(month, year) {
 
     while (dateValue <= totalDaysInMonth) {
       document.querySelector(
-        '#dpjs_dates',
-      ).innerHTML += `<div id="dpjs_datesRow-${rowValue}" class="dpjs_datesList"></div>`;
+        `#dpjs_dates_${elementID}`,
+      ).innerHTML += `<div id="dpjs_${elementID}_datesRow-${rowValue}" class="dpjs_datesList"></div>`;
 
       for (let i = 0; i < 7; i++) {
         if (i === startingDayIndex) startPopulatingDates = true;
@@ -330,20 +338,20 @@ function populateCalenderDates(month, year) {
         if (startPopulatingDates && dateValue <= totalDaysInMonth) {
           // add <p> tag with date
           document.querySelector(
-            `#dpjs_datesRow-${rowValue}`,
-          ).innerHTML += `<p id="dpjs_date-${dateValue}">${dateValue}</p>`;
+            `#dpjs_${elementID}_datesRow-${rowValue}`,
+          ).innerHTML += `<p id="dpjs_${elementID}_date-${dateValue}">${dateValue}</p>`;
           dateValue++;
         } else {
           // add empty <p> tag
           document.querySelector(
-            `#dpjs_datesRow-${rowValue}`,
+            `#dpjs_${elementID}_datesRow-${rowValue}`,
           ).innerHTML += `<p class="dpjs_emptyDateSlot"></p>`;
         }
       }
       if (dateValue <= totalDaysInMonth) rowValue++;
     }
 
-    document.querySelector('#dpjs_dates').style.opacity = '1';
+    document.querySelector(`#dpjs_dates_${elementID}`).style.opacity = '1';
   }, 500);
 }
 

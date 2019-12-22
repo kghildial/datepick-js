@@ -9,4 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initMonth: 'Apr',
     initYear: 1982,
   });
+
+  initDatepicker('testInput2', {
+    minYear: 1980,
+    maxYear: 2020,
+    initMonth: 'May',
+    initYear: 1983,
+  });
 });
