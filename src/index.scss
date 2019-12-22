@@ -5,12 +5,79 @@
 #dpjs_datepicker {
   width: 500px;
   margin: 0 auto;
+  padding: 20px;
   border: 1px solid #ccc;
   font-family: 'Poppins', sans-serif;
 
   .dpjs_selectors {
     display: flex;
     justify-content: space-evenly;
+    padding: 10px 0;
+
+    .dpjs_selectWrapper {
+      display: flex;
+      .dpjs_pseudoSelect {
+        width: 100px;
+        height: 30px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        position: relative;
+        cursor: pointer;
+
+        .dpjs_pseudoSelectList {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          position: absolute;
+          top: 31px;
+          left: -1px;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          background: #fff;
+          box-shadow: 0 5px 10px #ccc;
+          border-top: none;
+          border-bottom-left-radius: 5px;
+          border-bottom-right-radius: 5px;
+          height: 0;
+          overflow-y: scroll;
+          z-index: 99;
+
+          &::-webkit-scrollbar {
+            width: 6px;
+            background: #ddd;
+          }
+          
+          &::-webkit-scrollbar-thumb {
+            background: #bbb;
+            border-radius: 20px;
+            transition: 0.3s linear;
+        
+            &:hover {
+              background: #aaa;
+            }
+          }
+
+          li {
+            width: 100%;
+            text-align: center;
+            padding: 5px 0;
+            border-top: 1px solid #eee;
+            cursor: pointer;
+            transition: 0.3s linear;
+
+            &:first-of-type {
+              border-top: none;
+            }
+
+            &:hover {
+              background: #eee;
+            }
+          }
+        }
+      }
+    }
   }
 
   #dpjs_days, .dpjs_datesList {
@@ -22,6 +89,26 @@
       margin: 0 5px;
       padding: 5px 10px;
       cursor: pointer;
+    }
+  }
+
+  .dpjs_datesList {
+    margin: 5px 0;
+    p {
+      border: 1px solid transparent;
+      border-radius: 5px;
+      transition: 0.3s linear;
+      &:hover {
+        border: 1px solid #ccc;
+      }
+    }
+
+    .dpjs_emptyDateSlot {
+      background: #eee;
+
+      &:hover {
+        border: 1px solid transparent;
+      }
     }
   }
 }
