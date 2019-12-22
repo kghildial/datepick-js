@@ -232,10 +232,13 @@ function addSelectors(elementID, { initMonth, initYear, minYear, maxYear }) {
 
           event.target.parentElement.style.height = '0';
 
-          populateCalenderDates(
-            document.querySelector(`#dpjs_monthSelector-${elementID}`).value,
-            document.querySelector(`#dpjs_yearSelector_${elementID}`).value,
-          );
+          const monthVal = document.querySelector(
+            `#dpjs_monthSelector_${elementID}`,
+          ).value;
+          const yearVal = document.querySelector(
+            `#dpjs_yearSelector_${elementID}`,
+          ).value;
+          populateCalenderDates(elementID, monthVal, yearVal);
         });
     });
   };
