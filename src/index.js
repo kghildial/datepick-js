@@ -26,7 +26,11 @@ const daysList = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const monthsList = Object.keys(monthsMap);
 
+const datepickerStates = {};
+
 function initDatepicker(elememtID, dpjsConfig) {
+  createDatePickerState(elememtID, dpjsConfig);
+
   const today = new Date();
   const initMonth = dpjsConfig.initMonth || monthsList[today.getMonth()];
   const initYear = dpjsConfig.initYear || today.getFullYear();
@@ -35,7 +39,6 @@ function initDatepicker(elememtID, dpjsConfig) {
   document.querySelector('body').innerHTML +=
     '<div id="dpjs_datepicker"><div class="dpjs_selectors"><div id="dpjs_pseudoMonthSelector" class="dpjs_selectWrapper"><select name="dpjs_month" id="dpjs_monthSelector"></select></div><div id="dpjs_pseudoYearSelector" class="dpjs_selectWrapper"><select name="dpjs_year" id="dpjs_yearSelector"></select></div></div><div id="dpjs_calender"><div id="dpjs_days"></div><div id="dpjs_dates"></div></div></div>';
 
-  // Populate days in the calender section
   populateCalenderDays();
   populateCalenderDates(initMonth, initYear);
   addSelectors({
@@ -44,10 +47,79 @@ function initDatepicker(elememtID, dpjsConfig) {
     minYear: dpjsConfig.minYear,
     maxYear: dpjsConfig.maxYear,
   });
-  // selectInitialDate();
+  setDatepickerPos(elememtID);
+  registerDatepickerEvents(elememtID);
 }
 
-// This fuction populates the selector contents kl;piuytrewq  2345678`120 
+function createDatePickerState(elementID, dpjsConfig) {
+  datepickerStates[elementID] = {
+    datepickerID: `dpjs_datepicker_${elementID}`,
+    isDatepickerOpen: false,
+    dpjsConfig,
+    selectedDate: '',
+  };
+}
+
+function registerDatepickerEvents(elementID) {
+  const datepickerInput = document.querySelector(`#${elementID}`);
+  const datepickerWidget = document.querySelector('#dpjs_datepicker');
+
+  const preventEdits = () => {
+    datepickerInput.addEventListener('keydown', event => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+  };
+
+  const toggleDatepickerOnCLick = () => {
+    datepickerStates[elementID] = false;
+    document.addEventListener('click', event => {
+      if (event.target.getAttribute('id') === elementID) {
+        datepickerWidget.style.display = 'block';
+        setTimeout(() => {
+          datepickerWidget.style.opacity = '1';
+        }, 200);
+      } else if (
+        !document.querySelector('#dpjs_datepicker').contains(event.target)
+      ) {
+        datepickerWidget.style.opacity = '0';
+        setTimeout(() => {
+          datepickerWidget.style.display = 'none';
+        }, 200);
+      }
+    });
+  };
+
+  preventEdits();
+  toggleDatepickerOnCLick();
+}
+
+function setDatepickerPos(elememtID) {
+  if (document.querySelectorAll(`#${elememtID}`).length > 1)
+    throw new Error(
+      `DatepickJS:: You have more than one instace of the ID => "${elememtID}" in the DOM. Please ensure the datepicker input to have a unique ID`,
+    );
+
+  const getOffset = el => {
+    var _x = 0;
+    var _y = 0;
+    while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
+      _x += el.offsetLeft - el.scrollLeft;
+      _y += el.offsetTop - el.scrollTop;
+      el = el.offsetParent;
+    }
+    return { top: _y, left: _x };
+  };
+
+  const inputEl = document.querySelector(`#${elememtID}`);
+
+  const inputPos = getOffset(inputEl);
+  document.querySelector('#dpjs_datepicker').style.top = `${inputPos.top +
+    inputEl.offsetHeight}px`;
+  document.querySelector('#dpjs_datepicker').style.left = `${inputPos.left}px`;
+}
+
+// This fuction populates the selector contents
 function addSelectors({ initMonth, initYear, minYear, maxYear }) {
   const selectorClauses = ['Month', 'Year'];
 
@@ -108,9 +180,13 @@ function addSelectors({ initMonth, initYear, minYear, maxYear }) {
   const registerSelectorEvents = selectorClauses => {
     // Close select-list event
     document.addEventListener('click', event => {
+      const parentElementClass = event.target.parentElement
+        ? event.target.parentElement.className
+        : '';
+
       if (
         event.target.className !== 'dpjs_pseudoSelectValue' &&
-        event.target.parentElement.className !== 'dpjs_pseudoSelectList'
+        parentElementClass
       ) {
         const selectorsList = document.querySelectorAll(
           '.dpjs_pseudoSelectList',
