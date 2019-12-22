@@ -33,7 +33,7 @@ function initDatepicker(elememtID, dpjsConfig) {
 
   // Populate days in the calender section
   populateCalenderDays();
-  populateMonthDates('Dec', 2019);
+  populateCalenderDates('Dec', 2019);
   addSelectors('Dec', 2019);
 }
 
@@ -110,6 +110,7 @@ function addSelectors(initialMonth, initialYear) {
       }
     });
 
+    // Loop to register open select list and option choose events
     selectorClauses.forEach(selectorClause => {
       // Open select-list input
       document
@@ -133,6 +134,11 @@ function addSelectors(initialMonth, initialYear) {
           ).value = event.target.getAttribute('value');
 
           event.target.parentElement.style.height = '0';
+
+          populateCalenderDates(
+            document.querySelector('#dpjs_monthSelector').value,
+            document.querySelector('#dpjs_yearSelector').value,
+          );
         });
     });
 
@@ -212,7 +218,7 @@ function populateCalenderDays() {
   });
 }
 
-function populateMonthDates(month, year) {
+function populateCalenderDates(month, year) {
   // Clear any existing dates in the calender
   document.querySelector('#dpjs_dates').innerHTML = '';
   const startingDayIndex = getMonthStartingDayIndex(month, year);
