@@ -1,6 +1,6 @@
 {
   "name": "datepick-js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Vanilla JS DatePicker with a Clean UI",
   "main": "dist/bundle.js",
   "scripts": {
