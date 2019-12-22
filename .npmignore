@@ -1,5 +1,4 @@
 .vscode/
-.dist/index.html
 node_modules/
 src/
 .prettierignore
