@@ -220,36 +220,44 @@ function populateCalenderDays() {
 
 function populateCalenderDates(month, year) {
   // Clear any existing dates in the calender
-  document.querySelector('#dpjs_dates').innerHTML = '';
-  const startingDayIndex = getMonthStartingDayIndex(month, year);
-  const totalDaysInMonth = getTotalDaysInMonth(month, year);
+  document.querySelector('#dpjs_dates').style.opacity = '0';
 
-  let dateValue = 1;
-  let rowValue = 1;
-  let startPopulatingDates = false;
+  setTimeout(() => {
+    document.querySelector('#dpjs_dates').innerHTML = '';
 
-  while (dateValue <= totalDaysInMonth) {
-    document.querySelector(
-      '#dpjs_dates',
-    ).innerHTML += `<div id="dpjs_datesRow-${rowValue}" class="dpjs_datesList"></div>`;
-    for (let i = 0; i < 7; i++) {
-      if (i === startingDayIndex) startPopulatingDates = true;
+    const startingDayIndex = getMonthStartingDayIndex(month, year);
+    const totalDaysInMonth = getTotalDaysInMonth(month, year);
 
-      if (startPopulatingDates && dateValue <= totalDaysInMonth) {
-        // add <p> tag with date
-        document.querySelector(
-          `#dpjs_datesRow-${rowValue}`,
-        ).innerHTML += `<p id="dpjs_date-${dateValue}">${dateValue}</p>`;
-        dateValue++;
-      } else {
-        // add empty <p> tag
-        document.querySelector(
-          `#dpjs_datesRow-${rowValue}`,
-        ).innerHTML += `<p class="dpjs_emptyDateSlot"></p>`;
+    let dateValue = 1;
+    let rowValue = 1;
+    let startPopulatingDates = false;
+
+    while (dateValue <= totalDaysInMonth) {
+      document.querySelector(
+        '#dpjs_dates',
+      ).innerHTML += `<div id="dpjs_datesRow-${rowValue}" class="dpjs_datesList"></div>`;
+
+      for (let i = 0; i < 7; i++) {
+        if (i === startingDayIndex) startPopulatingDates = true;
+
+        if (startPopulatingDates && dateValue <= totalDaysInMonth) {
+          // add <p> tag with date
+          document.querySelector(
+            `#dpjs_datesRow-${rowValue}`,
+          ).innerHTML += `<p id="dpjs_date-${dateValue}">${dateValue}</p>`;
+          dateValue++;
+        } else {
+          // add empty <p> tag
+          document.querySelector(
+            `#dpjs_datesRow-${rowValue}`,
+          ).innerHTML += `<p class="dpjs_emptyDateSlot"></p>`;
+        }
       }
+      if (dateValue <= totalDaysInMonth) rowValue++;
     }
-    if (dateValue <= totalDaysInMonth) rowValue++;
-  }
+
+    document.querySelector('#dpjs_dates').style.opacity = '1';
+  }, 500);
 }
 
 document.addEventListener('DOMContentLoaded', initDatepicker);
