@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins:300,400,500&display=swap');
 
 // Temp. dev styles
-#dpjs_datepicker {
+.dpjs_datepicker {
   position: absolute;
   display: none;;
   width: 500px;
@@ -110,11 +110,11 @@
     }
   }
 
-  #dpjs_dates {
+  .dpjs_dates {
     transition: 0.5s linear;
   }
 
-  #dpjs_days, .dpjs_datesList {
+  .dpjs_days, .dpjs_datesList {
     display: flex;
 
     p {
