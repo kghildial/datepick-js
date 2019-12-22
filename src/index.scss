@@ -6,7 +6,7 @@
   position: absolute;
   display: none;;
   width: 500px;
-  padding: 20px;
+  padding: 0 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
   background: #fff;
@@ -139,11 +139,37 @@
 
     .dpjs_emptyDateSlot {
       background: #eee;
+      cursor: not-allowed;
 
       &:hover {
         border: 1px solid transparent;
       }
     }
+  }
+
+  .dpjs_legend {
+    display: flex;
+    margin: 30px 0 10px;
+    justify-content: space-evenly;
+    font-size: 10px;
+
+    .dpjs_legend_today:before, .dpjs_legend_selected:before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 10px;
+    }
+    
+    .dpjs_legend_today:before {
+      background: #00d7cd;
+    }
+
+    .dpjs_legend_selected:before {
+      background: #ccc;
+    }
+
+
   }
 }
 
