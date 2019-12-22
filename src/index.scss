@@ -3,11 +3,17 @@
 
 // Temp. dev styles
 #dpjs_datepicker {
+  position: absolute;
+  display: none;;
   width: 500px;
-  margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
   font-family: 'Poppins', sans-serif;
+  transition: 0.5s linear;
+  opacity: 0;
+  z-index: 2147483647; // Highest possible value of z-index
 
   .dpjs_selectors {
     display: flex;
