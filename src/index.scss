@@ -104,6 +104,10 @@
     }
   }
 
+  #dpjs_dates {
+    transition: 0.5s linear;
+  }
+
   #dpjs_days, .dpjs_datesList {
     display: flex;
 
