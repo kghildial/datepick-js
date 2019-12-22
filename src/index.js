@@ -34,10 +34,10 @@ function initDatepicker(elememtID, dpjsConfig) {
   // Populate days in the calender section
   populateCalenderDays();
   populateMonthDates('Dec', 2019);
-  addSelectors();
+  addSelectors('Dec', 2019);
 }
 
-function addSelectors() {
+function addSelectors(initialMonth, initialYear) {
   const selectorClauses = ['Month', 'Year'];
 
   const populateRealSelectors = (selectorClauses, startYear, endYear) => {
@@ -94,17 +94,64 @@ function addSelectors() {
     });
   };
 
+  const registerSelectorEvents = selectorClauses => {
+    // Close select-list event
+    document.addEventListener('click', event => {
+      if (
+        event.target.className !== 'dpjs_pseudoSelectValue' &&
+        event.target.parentElement.className !== 'dpjs_pseudoSelectList'
+      ) {
+        const selectorsList = document.querySelectorAll(
+          '.dpjs_pseudoSelectList',
+        );
+        Object.keys(selectorsList).forEach(index => {
+          selectorsList[index].style.height = 0;
+        });
+      }
+    });
+
+    selectorClauses.forEach(selectorClause => {
+      // Open select-list input
+      document
+        .querySelector(`#dpjs_selected${selectorClause}Value`)
+        .addEventListener('click', event => {
+          if (event.target.className === 'dpjs_pseudoSelectValue')
+            event.target.nextElementSibling.style.height = '300px';
+        });
+
+      // Select an option event
+      document
+        .querySelector(`#dpjs_${selectorClause.toLowerCase()}SelectList`)
+        .addEventListener('click', event => {
+          document.querySelector(
+            `#dpjs_selected${selectorClause}Value`,
+          ).textContent = event.target.getAttribute('value');
+
+          // Set the value in the original select input
+          document.querySelector(
+            `#dpjs_${selectorClause.toLowerCase()}Selector`,
+          ).value = event.target.getAttribute('value');
+
+          event.target.parentElement.style.height = '0';
+        });
+    });
+
+    document.querySelectorAll;
+  };
+
   // Add pseudoSelectors
   selectorClauses.forEach(selectorClause => {
     document.querySelector(
       `#dpjs_pseudo${selectorClause}Selector`,
-    ).innerHTML += `<span id="dpjs_pseudo${selectorClause}Selector" class="dpjs_pseudoSelect"></span>`;
+    ).innerHTML += `<div id="dpjs_pseudo${selectorClause}Selector" class="dpjs_pseudoSelect"><span id="dpjs_selected${selectorClause}Value" class="dpjs_pseudoSelectValue">${eval(
+      `initial${selectorClause}`,
+    )}</span></div>`;
   });
 
   // TODO: Add params dependency line from init function
   populateRealSelectors(selectorClauses, 1980, 2019);
   populatePseudoSelectors(selectorClauses, 1980, 2019);
-  registerSelectorEvents();
+  registerSelectorEvents(selectorClauses);
 }
 
 // Zeller Magic :P

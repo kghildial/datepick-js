@@ -16,6 +16,11 @@
 
     .dpjs_selectWrapper {
       display: flex;
+
+      select {
+        display: none;
+      }
+
       .dpjs_pseudoSelect {
         width: 100px;
         height: 30px;
@@ -23,6 +28,24 @@
         border-radius: 5px;
         position: relative;
         cursor: pointer;
+
+        .dpjs_pseudoSelectValue {
+          display: flex;
+          height: 100%;
+          align-items: center;
+          padding: 0 20px;
+          position: relative;
+
+          &:before {
+            content: '';
+            position: absolute;
+            right: 10px;
+            border-top: 5px solid #444;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: none;
+          }
+        }
 
         .dpjs_pseudoSelectList {
           list-style: none;
@@ -43,6 +66,7 @@
           height: 0;
           overflow-y: scroll;
           z-index: 99;
+          transition: 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 
           &::-webkit-scrollbar {
             width: 6px;
