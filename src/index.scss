@@ -1,4 +1,30 @@
-body {
-  background: #000;
-  color: #fff;
+// Font import
+@import url('https://fonts.googleapis.com/css?family=Poppins:300,400,500&display=swap');
+
+// Temp. dev styles
+#dpjs_datepicker {
+  width: 500px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  font-family: 'Poppins', sans-serif;
+
+  .dpjs_selectors {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  #dpjs_days, .dpjs_datesList {
+    display: flex;
+
+    p {
+      width: calc(500px/7 - 10px);
+      text-align: center;
+      margin: 0 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  }
 }
+
+
+// Production styles
