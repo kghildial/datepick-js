@@ -27,17 +27,28 @@ const daysList = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const monthsList = Object.keys(monthsMap);
 
 function initDatepicker(elememtID, dpjsConfig) {
+  const today = new Date();
+  const initMonth = dpjsConfig.initMonth || monthsList[today.getMonth()];
+  const initYear = dpjsConfig.initYear || today.getFullYear();
+
   // Attach the initial datepicker scaffold
   document.querySelector('body').innerHTML +=
     '<div id="dpjs_datepicker"><div class="dpjs_selectors"><div id="dpjs_pseudoMonthSelector" class="dpjs_selectWrapper"><select name="dpjs_month" id="dpjs_monthSelector"></select></div><div id="dpjs_pseudoYearSelector" class="dpjs_selectWrapper"><select name="dpjs_year" id="dpjs_yearSelector"></select></div></div><div id="dpjs_calender"><div id="dpjs_days"></div><div id="dpjs_dates"></div></div></div>';
 
   // Populate days in the calender section
   populateCalenderDays();
-  populateCalenderDates('Dec', 2019);
-  addSelectors('Dec', 2019);
+  populateCalenderDates(initMonth, initYear);
+  addSelectors({
+    initMonth,
+    initYear,
+    minYear: dpjsConfig.minYear,
+    maxYear: dpjsConfig.maxYear,
+  });
+  // selectInitialDate();
 }
 
-function addSelectors(initialMonth, initialYear) {
+// This fuction populates the selector contents kl;piuytrewq  2345678`120 
+function addSelectors({ initMonth, initYear, minYear, maxYear }) {
   const selectorClauses = ['Month', 'Year'];
 
   const populateRealSelectors = (selectorClauses, startYear, endYear) => {
@@ -150,13 +161,13 @@ function addSelectors(initialMonth, initialYear) {
     document.querySelector(
       `#dpjs_pseudo${selectorClause}Selector`,
     ).innerHTML += `<div id="dpjs_pseudo${selectorClause}Selector" class="dpjs_pseudoSelect"><span id="dpjs_selected${selectorClause}Value" class="dpjs_pseudoSelectValue">${eval(
-      `initial${selectorClause}`,
+      `init${selectorClause}`,
     )}</span></div>`;
   });
 
   // TODO: Add params dependency line from init function
-  populateRealSelectors(selectorClauses, 1980, 2019);
-  populatePseudoSelectors(selectorClauses, 1980, 2019);
+  populateRealSelectors(selectorClauses, minYear, maxYear);
+  populatePseudoSelectors(selectorClauses, minYear, maxYear);
   registerSelectorEvents(selectorClauses);
 }
 
@@ -260,7 +271,4 @@ function populateCalenderDates(month, year) {
   }, 500);
 }
 
-document.addEventListener('DOMContentLoaded', initDatepicker);
-
-// NOTE: Commented temporarily for testing on local HTML
-// export default initDatepicker;
+export default initDatepicker;
