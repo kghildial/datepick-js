@@ -3,4 +3,5 @@ node_modules/
 src/
 .prettierignore
 .prettierrc
-.webpack.config.js
+webpack.config.js
+index.html
