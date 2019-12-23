@@ -142,16 +142,21 @@ function registerDatepickerEvents(elementID, dpjsConfig) {
 
           // De-highlight the prevous selected date
           if (datepickerInputElement.value !== '') {
-            const currentDateValue = Number(
-              datepickerInputElement.value.split('-')[0],
-            );
-            const todaysDate = new Date().getDate();
-            document.querySelector(
+            const currentFullDateValue = datepickerInputElement.value;
+            const today = new Date();
+            const initDate = dpjsConfig.initDate || today.getDate();
+            const initMonth =
+              dpjsConfig.initMonth || monthsList[today.getMonth()];
+            const initYear = dpjsConfig.initYear || today.getFullYear();
+
+            const fullInitValue = (document.querySelector(
               `#dpjs_${elementID}_date-${
                 datepickerInputElement.value.split('-')[0]
               }`,
             ).style.background =
-              currentDateValue === todaysDate ? '#00d7cd' : '#fff';
+              currentFullDateValue === `${initDate}-${initMonth}-${initYear}`
+                ? '#00d7cd'
+                : '#fff');
           }
 
           // Highlight the selected date
@@ -166,7 +171,7 @@ function registerDatepickerEvents(elementID, dpjsConfig) {
           hideDatepicker();
 
           // Redirect to custom onChnage function (if-present)
-          dpjsConfig.onChange(newDate);
+          if (dpjsConfig.onChange) dpjsConfig.onChange(newDate);
         }
       });
   };
