@@ -56,12 +56,16 @@ function initDatepicker(elementID, dpjsConfig) {
 
   populateCalenderDays(elementID);
   populateCalenderDates(elementID, initMonth, initYear, dpjsConfig);
-  addSelectors(elementID, {
-    initMonth,
-    initYear,
-    minYear: dpjsConfig.minYear,
-    maxYear: dpjsConfig.maxYear,
-  });
+  addSelectors(
+    elementID,
+    {
+      initMonth,
+      initYear,
+      minYear: dpjsConfig.minYear,
+      maxYear: dpjsConfig.maxYear,
+    },
+    dpjsConfig,
+  );
   setDatepickerPos(elementID);
   registerDatepickerEvents(elementID, dpjsConfig);
 }
@@ -201,7 +205,11 @@ function setDatepickerPos(elementID) {
 }
 
 // This fuction populates the selector contents
-function addSelectors(elementID, { initMonth, initYear, minYear, maxYear }) {
+function addSelectors(
+  elementID,
+  { initMonth, initYear, minYear, maxYear },
+  dpjsConfig,
+) {
   const selectorClauses = ['Month', 'Year'];
 
   const populateRealSelectors = (selectorClauses, startYear, endYear) => {
@@ -314,7 +322,7 @@ function addSelectors(elementID, { initMonth, initYear, minYear, maxYear }) {
           const yearVal = document.querySelector(
             `#dpjs_yearSelector_${elementID}`,
           ).value;
-          populateCalenderDates(elementID, monthVal, yearVal);
+          populateCalenderDates(elementID, monthVal, yearVal, dpjsConfig);
         });
     });
   };
@@ -402,6 +410,14 @@ function populateCalenderDates(elementID, month, year, dpjsConfig) {
     const startingDayIndex = getMonthStartingDayIndex(month, year);
     const totalDaysInMonth = getTotalDaysInMonth(month, year);
     const initDate = dpjsConfig.initDate || new Date().getDate();
+    const initMonth = dpjsConfig.initMonth || monthsList[new Date().getMonth()];
+    const initYear = dpjsConfig.initYear || new Date().getFullYear();
+    const selectedMonth = document.querySelector(
+      `#dpjs_monthSelector_${elementID}`,
+    ).value;
+    const selectedYear = Number(
+      document.querySelector(`#dpjs_yearSelector_${elementID}`).value,
+    );
 
     let dateValue = 1;
     let rowValue = 1;
@@ -422,7 +438,11 @@ function populateCalenderDates(elementID, month, year, dpjsConfig) {
           ).innerHTML += `<p id="dpjs_${elementID}_date-${dateValue}">${dateValue}</p>`;
 
           // Highlight todays date
-          if (dateValue === initDate) {
+          if (
+            dateValue === initDate &&
+            selectedMonth === initMonth &&
+            selectedYear === initYear
+          ) {
             document.querySelector(
               `#dpjs_${elementID}_date-${dateValue}`,
             ).style.background = '#00d7cd';
