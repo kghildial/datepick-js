@@ -4,8 +4,9 @@ module.exports = {
   mode: 'development',
   entry: './src/testIndex.js',
   output: {
-    filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js',
+    libraryTarget: 'commonjs2',
   },
   devServer: {
     contentBase: './dist',
